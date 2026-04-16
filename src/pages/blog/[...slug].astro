@@ -123,31 +123,22 @@ const isRootPost = !post.data.parent;
       </section>
     )}
 
-    <!-- Post Content -->
-    <div class="prose prose-lg max-w-none mb-12
-                prose-headings:font-bold prose-headings:tracking-tight
-                prose-h1:text-3xl prose-h1:mt-8 prose-h1:mb-4
-                prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4
-                prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
-                prose-p:text-foreground prose-p:leading-loose prose-p:mb-4
-                prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-a:transition-colors
-                prose-code:text-sm prose-code:font-mono prose-code:break-words
-                prose-pre:bg-muted prose-pre:border prose-pre:border-border prose-pre:rounded-lg prose-pre:p-4 prose-pre:overflow-x-auto
-                prose-strong:font-semibold prose-strong:text-foreground
-                prose-ul:list-disc prose-ul:ml-6 prose-ul:mb-4 prose-li:mb-2
-                prose-ol:list-decimal prose-ol:ml-6 prose-ol:mb-4 prose-li:text-foreground">
-      <Content />
-    </div>
-
-    <!-- "Putting it all together" section for root posts with children -->
-    {isRootPost && children.length > 0 && (
-      <section class="mb-12 rounded-lg border bg-gradient-to-br from-muted/50 to-muted/30 p-6 transition-shadow hover:shadow-sm">
-        <h2 class="mb-3 text-xl font-semibold">Putting it all together</h2>
-        <p class="text-muted-foreground leading-relaxed">
-          Now that you've explored each individual concept, you understand the building blocks. 
-          In a future update, we'll show you how all these pieces connect to recreate the complete effect.
-        </p>
-      </section>
+    <!-- Post Content — only for leaf posts (no children) -->
+    {children.length === 0 && (
+      <div class="prose prose-lg max-w-none mb-12
+                  prose-headings:font-bold prose-headings:tracking-tight
+                  prose-h1:text-3xl prose-h1:mt-8 prose-h1:mb-4
+                  prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4
+                  prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
+                  prose-p:text-foreground prose-p:leading-loose prose-p:mb-4
+                  prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-a:transition-colors
+                  prose-code:text-sm prose-code:font-mono prose-code:break-words
+                  prose-pre:bg-muted prose-pre:border prose-pre:border-border prose-pre:rounded-lg prose-pre:p-4 prose-pre:overflow-x-auto
+                  prose-strong:font-semibold prose-strong:text-foreground
+                  prose-ul:list-disc prose-ul:ml-6 prose-ul:mb-4 prose-li:mb-2
+                  prose-ol:list-decimal prose-ol:ml-6 prose-ol:mb-4 prose-li:text-foreground">
+        <Content />
+      </div>
     )}
 
     <!-- Back to Parent Link -->
