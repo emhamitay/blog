@@ -1,0 +1,36 @@
+---
+interface Props {
+  id?: string;
+  name?: string;
+  value?: string;
+  checked?: boolean;
+  disabled?: boolean;
+  class?: string;
+}
+
+const { id, name, value, checked = false, disabled = false, class: className = '' } = Astro.props;
+---
+
+<span class={`relative inline-flex size-4 shrink-0 ${className}`}>
+  <input
+    type="checkbox"
+    id={id}
+    name={name}
+    value={value}
+    checked={checked}
+    disabled={disabled}
+    class="peer size-4 cursor-pointer appearance-none rounded-[4px] border border-input bg-background shadow-xs transition-[color,box-shadow] outline-none focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 checked:border-primary checked:bg-primary disabled:cursor-not-allowed disabled:opacity-50 dark:bg-input/30"
+  />
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    stroke-width="3"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    class="pointer-events-none absolute inset-0 m-auto hidden size-3.5 text-primary-foreground peer-checked:block"
+  >
+    <path d="M20 6 9 17l-5-5"/>
+  </svg>
+</span>

@@ -1,0 +1,159 @@
+---
+import { getCollection, type CollectionEntry, render } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Breadcrumb from '@/components/astro/Breadcrumb.astro';
+import Card from '@/components/astro/Card.astro';
+import CardHeader from '@/components/astro/CardHeader.astro';
+import CardTitle from '@/components/astro/CardTitle.astro';
+import CardDescription from '@/components/astro/CardDescription.astro';
+import CardFooter from '@/components/astro/CardFooter.astro';
+import Badge from '@/components/astro/Badge.astro';
+import Button from '@/components/astro/Button.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  return posts.map(post => ({
+    params: { slug: post.id },
+    props: { post },
+  }));
+}
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+const { Content } = await render(post);
+
+// Get all posts for navigation
+const allPosts = await getCollection('blog', ({ data }) => !data.draft);
+
+// Find children of this post
+const children = allPosts
+  .filter(p => p.data.parent === post.id)
+  .sort((a, b) => (a.data.order || 0) - (b.data.order || 0));
+
+// Build breadcrumb trail
+const breadcrumbs: { label: string; href?: string }[] = [{ label: 'Home', href: '/' }];
+
+// Recursively build parent chain
+const buildParentChain = (id: string): string[] => {
+  const currentPost = allPosts.find(p => p.id === id);
+  if (!currentPost || !currentPost.data.parent) return [];
+  return [...buildParentChain(currentPost.data.parent), currentPost.data.parent];
+};
+
+const parentChain = buildParentChain(post.id);
+for (const parentId of parentChain) {
+  const parentPost = allPosts.find(p => p.id === parentId);
+  if (parentPost) {
+    breadcrumbs.push({
+      label: parentPost.data.title,
+      href: `/blog/${parentPost.id}`,
+    });
+  }
+}
+breadcrumbs.push({ label: post.data.title });
+
+// Find parent post for "Back" link
+const parentPost = post.data.parent 
+  ? allPosts.find(p => p.id === post.data.parent)
+  : null;
+
+// Check if this is a root post (no parent)
+const isRootPost = !post.data.parent;
+---
+
+<BaseLayout title={post.data.title} description={post.data.description}>
+  <article class="mx-auto max-w-4xl">
+    <!-- Breadcrumb -->
+    <div class="mb-8">
+      <Breadcrumb items={breadcrumbs} />
+    </div>
+
+    <!-- Post Header -->
+    <header class="mb-8">
+      <h1 class="mb-4 text-4xl font-bold tracking-tight sm:text-5xl">
+        {post.data.title}
+      </h1>
+      <p class="mb-4 text-xl text-muted-foreground">
+        {post.data.description}
+      </p>
+      <div class="flex flex-wrap items-center gap-4">
+        <p class="text-sm text-muted-foreground">
+          {post.data.date.toLocaleDateString('en-US', { 
+            year: 'numeric', 
+            month: 'long', 
+            day: 'numeric' 
+          })}
+        </p>
+        {post.data.tags && post.data.tags.length > 0 && (
+          <div class="flex flex-wrap gap-2">
+            {post.data.tags.map(tag => (
+              <Badge variant="secondary">{tag}</Badge>
+            ))}
+          </div>
+        )}
+      </div>
+    </header>
+
+    <!-- Children Topics (if any) - shown BEFORE content -->
+    {children.length > 0 && (
+      <section class="mb-12">
+        <h2 class="mb-6 text-2xl font-bold">Topics in this post</h2>
+        <div class="grid gap-4">
+          {children.map(child => (
+            <Card class="transition-shadow hover:shadow-md">
+              <CardHeader>
+                <CardTitle class="text-xl">
+                  <a href={`/blog/${child.id}`} class="hover:text-primary transition-colors">
+                    {child.data.title}
+                  </a>
+                </CardTitle>
+                <CardDescription>{child.data.description}</CardDescription>
+              </CardHeader>
+              <CardFooter>
+                <Button variant="ghost" size="sm" href={`/blog/${child.id}`}>
+                  Read more →
+                </Button>
+              </CardFooter>
+            </Card>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Post Content -->
+    <div class="prose prose-lg max-w-none mb-12
+                prose-headings:font-bold prose-headings:tracking-tight
+                prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl
+                prose-p:text-foreground prose-p:leading-relaxed
+                prose-a:text-primary prose-a:no-underline hover:prose-a:underline
+                prose-code:text-sm prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded
+                prose-pre:bg-muted prose-pre:border
+                prose-strong:font-semibold
+                prose-ul:list-disc prose-ol:list-decimal">
+      <Content />
+    </div>
+
+    <!-- "Putting it all together" section for root posts with children -->
+    {isRootPost && children.length > 0 && (
+      <section class="mb-12 rounded-lg border bg-muted/50 p-6">
+        <h2 class="mb-3 text-2xl font-bold">Putting it all together</h2>
+        <p class="text-muted-foreground">
+          Now that you've explored each individual concept, you understand the building blocks. 
+          In a future update, we'll show you how all these pieces connect to recreate the complete effect.
+        </p>
+      </section>
+    )}
+
+    <!-- Back to Parent Link -->
+    {parentPost && (
+      <div class="border-t pt-8">
+        <Button variant="ghost" href={`/blog/${parentPost.id}`}>
+          ← Back to {parentPost.data.title}
+        </Button>
+      </div>
+    )}
+  </article>
+</BaseLayout>

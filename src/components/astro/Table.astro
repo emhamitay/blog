@@ -1,0 +1,38 @@
+---
+interface TableColumn {
+  key: string;
+  header: string;
+  class?: string;
+}
+interface Props {
+  columns: TableColumn[];
+  rows: Record<string, string | number>[];
+  class?: string;
+  caption?: string;
+}
+const { columns, rows, class: className = '', caption } = Astro.props;
+---
+
+<div class={`relative w-full overflow-auto ${className}`}>
+  <table class="w-full caption-bottom text-sm">
+    {caption && <caption class="mt-4 text-sm text-muted-foreground">{caption}</caption>}
+    <thead class="[&_tr]:border-b">
+      <tr class="border-b transition-colors hover:bg-muted/50">
+        {columns.map((col) => (
+          <th class={`h-12 px-4 text-left align-middle font-medium text-muted-foreground ${col.class ?? ''}`}>
+            {col.header}
+          </th>
+        ))}
+      </tr>
+    </thead>
+    <tbody class="[&_tr:last-child]:border-0">
+      {rows.map((row) => (
+        <tr class="border-b transition-colors hover:bg-muted/50">
+          {columns.map((col) => (
+            <td class="p-4 align-middle">{row[col.key]}</td>
+          ))}
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
