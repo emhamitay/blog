@@ -1,0 +1,39 @@
+---
+interface AccordionItem {
+  title: string;
+  content: string;
+  open?: boolean;
+}
+
+interface Props {
+  items: AccordionItem[];
+  class?: string;
+}
+
+const { items, class: className = '' } = Astro.props;
+---
+
+<div class={className}>
+  {items.map((item) => (
+    <details open={item.open} class="group border-b last:border-b-0">
+      <summary class="flex cursor-pointer list-none items-start justify-between gap-4 py-4 text-left text-sm font-medium transition-all hover:underline [&::-webkit-details-marker]:hidden">
+        {item.title}
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="pointer-events-none size-4 shrink-0 translate-y-0.5 text-muted-foreground transition-transform duration-200 group-open:rotate-180"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path d="m6 9 6 6 6-6" />
+        </svg>
+      </summary>
+      <div class="pb-4 pt-0 text-sm text-muted-foreground">
+        {item.content}
+      </div>
+    </details>
+  ))}
+</div>

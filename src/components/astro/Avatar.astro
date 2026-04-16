@@ -1,0 +1,26 @@
+---
+interface Props {
+  src?: string;
+  alt?: string;
+  fallback?: string;
+  class?: string;
+  size?: 'sm' | 'default' | 'lg';
+}
+const { src, alt = '', fallback = '', class: className = '', size = 'default' } = Astro.props;
+
+const sizes: Record<string, string> = {
+  sm: 'h-8 w-8 text-xs',
+  default: 'h-10 w-10 text-sm',
+  lg: 'h-14 w-14 text-base',
+};
+---
+
+<span class={`relative flex shrink-0 overflow-hidden rounded-full ${sizes[size]} ${className}`}>
+  {src ? (
+    <img class="aspect-square h-full w-full object-cover" src={src} alt={alt} />
+  ) : (
+    <span class="flex h-full w-full items-center justify-center rounded-full bg-muted font-medium">
+      {fallback}
+    </span>
+  )}
+</span>
