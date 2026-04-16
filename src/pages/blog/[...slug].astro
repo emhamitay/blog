@@ -1,5 +1,5 @@
 ---
-import { getCollection, type CollectionEntry } from 'astro:content';
+import { getCollection, type CollectionEntry, render } from 'astro:content';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Breadcrumb from '@/components/astro/Breadcrumb.astro';
 import Card from '@/components/astro/Card.astro';
@@ -13,7 +13,7 @@ import Button from '@/components/astro/Button.astro';
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
   return posts.map(post => ({
-    params: { slug: post.slug },
+    params: { slug: post.id },
     props: { post },
   }));
 }
@@ -23,33 +23,33 @@ interface Props {
 }
 
 const { post } = Astro.props;
-const { Content } = await post.render();
+const { Content } = await render(post);
 
 // Get all posts for navigation
 const allPosts = await getCollection('blog', ({ data }) => !data.draft);
 
 // Find children of this post
 const children = allPosts
-  .filter(p => p.data.parent === post.slug)
+  .filter(p => p.data.parent === post.id)
   .sort((a, b) => (a.data.order || 0) - (b.data.order || 0));
 
 // Build breadcrumb trail
 const breadcrumbs: { label: string; href?: string }[] = [{ label: 'Home', href: '/' }];
 
 // Recursively build parent chain
-const buildParentChain = (slug: string): string[] => {
-  const currentPost = allPosts.find(p => p.slug === slug);
+const buildParentChain = (id: string): string[] => {
+  const currentPost = allPosts.find(p => p.id === id);
   if (!currentPost || !currentPost.data.parent) return [];
   return [...buildParentChain(currentPost.data.parent), currentPost.data.parent];
 };
 
-const parentChain = buildParentChain(post.slug);
-for (const parentSlug of parentChain) {
-  const parentPost = allPosts.find(p => p.slug === parentSlug);
+const parentChain = buildParentChain(post.id);
+for (const parentId of parentChain) {
+  const parentPost = allPosts.find(p => p.id === parentId);
   if (parentPost) {
     breadcrumbs.push({
       label: parentPost.data.title,
-      href: `/blog/${parentPost.slug}`,
+      href: `/blog/${parentPost.id}`,
     });
   }
 }
@@ -57,7 +57,7 @@ breadcrumbs.push({ label: post.data.title });
 
 // Find parent post for "Back" link
 const parentPost = post.data.parent 
-  ? allPosts.find(p => p.slug === post.data.parent)
+  ? allPosts.find(p => p.id === post.data.parent)
   : null;
 
 // Check if this is a root post (no parent)
@@ -106,14 +106,14 @@ const isRootPost = !post.data.parent;
             <Card class="transition-shadow hover:shadow-md">
               <CardHeader>
                 <CardTitle class="text-xl">
-                  <a href={`/blog/${child.slug}`} class="hover:text-primary transition-colors">
+                  <a href={`/blog/${child.id}`} class="hover:text-primary transition-colors">
                     {child.data.title}
                   </a>
                 </CardTitle>
                 <CardDescription>{child.data.description}</CardDescription>
               </CardHeader>
               <CardFooter>
-                <Button variant="ghost" size="sm" href={`/blog/${child.slug}`}>
+                <Button variant="ghost" size="sm" href={`/blog/${child.id}`}>
                   Read more →
                 </Button>
               </CardFooter>
@@ -150,7 +150,7 @@ const isRootPost = !post.data.parent;
     <!-- Back to Parent Link -->
     {parentPost && (
       <div class="border-t pt-8">
-        <Button variant="ghost" href={`/blog/${parentPost.slug}`}>
+        <Button variant="ghost" href={`/blog/${parentPost.id}`}>
           ← Back to {parentPost.data.title}
         </Button>
       </div>
