@@ -99,21 +99,21 @@ const isRootPost = !post.data.parent;
 
     <!-- Children Topics (if any) - shown BEFORE content -->
     {children.length > 0 && (
-      <section class="mb-12">
-        <h2 class="mb-6 text-2xl font-bold">Topics in this post</h2>
-        <div class="grid gap-4">
+      <section class="mb-16">
+        <h2 class="mb-6 text-2xl font-bold tracking-tight">Topics in this post</h2>
+        <div class="grid gap-5">
           {children.map(child => (
-            <Card class="transition-shadow hover:shadow-md">
-              <CardHeader>
-                <CardTitle class="text-xl">
+            <Card class="transition-all duration-200 hover:shadow-md hover:border-border/80 hover:-translate-y-0.5">
+              <CardHeader class="pb-3">
+                <CardTitle class="text-lg font-semibold">
                   <a href={`/blog/${child.id}`} class="hover:text-primary transition-colors">
                     {child.data.title}
                   </a>
                 </CardTitle>
-                <CardDescription>{child.data.description}</CardDescription>
+                <CardDescription class="text-sm leading-relaxed pt-1">{child.data.description}</CardDescription>
               </CardHeader>
-              <CardFooter>
-                <Button variant="ghost" size="sm" href={`/blog/${child.id}`}>
+              <CardFooter class="pt-2">
+                <Button variant="ghost" size="sm" href={`/blog/${child.id}`} class="text-xs">
                   Read more →
                 </Button>
               </CardFooter>
@@ -126,21 +126,24 @@ const isRootPost = !post.data.parent;
     <!-- Post Content -->
     <div class="prose prose-lg max-w-none mb-12
                 prose-headings:font-bold prose-headings:tracking-tight
-                prose-h1:text-3xl prose-h2:text-2xl prose-h3:text-xl
-                prose-p:text-foreground prose-p:leading-relaxed
-                prose-a:text-primary prose-a:no-underline hover:prose-a:underline
-                prose-code:text-sm prose-code:bg-muted prose-code:px-1 prose-code:py-0.5 prose-code:rounded
-                prose-pre:bg-muted prose-pre:border
-                prose-strong:font-semibold
-                prose-ul:list-disc prose-ol:list-decimal">
+                prose-h1:text-3xl prose-h1:mt-8 prose-h1:mb-4
+                prose-h2:text-2xl prose-h2:mt-8 prose-h2:mb-4
+                prose-h3:text-xl prose-h3:mt-6 prose-h3:mb-3
+                prose-p:text-foreground prose-p:leading-loose prose-p:mb-4
+                prose-a:text-primary prose-a:no-underline hover:prose-a:underline prose-a:transition-colors
+                prose-code:text-sm prose-code:font-mono prose-code:break-words
+                prose-pre:bg-muted prose-pre:border prose-pre:border-border prose-pre:rounded-lg prose-pre:p-4 prose-pre:overflow-x-auto
+                prose-strong:font-semibold prose-strong:text-foreground
+                prose-ul:list-disc prose-ul:ml-6 prose-ul:mb-4 prose-li:mb-2
+                prose-ol:list-decimal prose-ol:ml-6 prose-ol:mb-4 prose-li:text-foreground">
       <Content />
     </div>
 
     <!-- "Putting it all together" section for root posts with children -->
     {isRootPost && children.length > 0 && (
-      <section class="mb-12 rounded-lg border bg-muted/50 p-6">
-        <h2 class="mb-3 text-2xl font-bold">Putting it all together</h2>
-        <p class="text-muted-foreground">
+      <section class="mb-12 rounded-lg border bg-gradient-to-br from-muted/50 to-muted/30 p-6 transition-shadow hover:shadow-sm">
+        <h2 class="mb-3 text-xl font-semibold">Putting it all together</h2>
+        <p class="text-muted-foreground leading-relaxed">
           Now that you've explored each individual concept, you understand the building blocks. 
           In a future update, we'll show you how all these pieces connect to recreate the complete effect.
         </p>
@@ -149,8 +152,8 @@ const isRootPost = !post.data.parent;
 
     <!-- Back to Parent Link -->
     {parentPost && (
-      <div class="border-t pt-8">
-        <Button variant="ghost" href={`/blog/${parentPost.id}`}>
+      <div class="border-t pt-8 mt-8">
+        <Button variant="ghost" href={`/blog/${parentPost.id}`} class="text-base">
           ← Back to {parentPost.data.title}
         </Button>
       </div>

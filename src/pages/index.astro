@@ -38,44 +38,44 @@ for (const post of rootPosts) {
       </p>
     </div>
 
-    <div class="grid gap-6">
+    <div class="grid gap-8">
       {sortedRootPosts.map(post => {
         const childCount = postChildrenCount.get(post.id) || 0;
         return (
-          <Card class="transition-shadow hover:shadow-lg">
-            <CardHeader>
+          <Card class="transition-all duration-200 hover:shadow-md hover:border-border/80 hover:-translate-y-0.5">
+            <CardHeader class="pb-4">
               <div class="flex items-start justify-between gap-4">
                 <div class="flex-1">
-                  <CardTitle class="mb-2">
+                  <CardTitle class="mb-3 text-2xl font-bold leading-tight">
                     <a href={`/blog/${post.id}`} class="hover:text-primary transition-colors">
                       {post.data.title}
                     </a>
                   </CardTitle>
                   {childCount > 0 && (
-                    <p class="text-sm text-muted-foreground mb-2">
+                    <p class="text-xs font-medium text-muted-foreground mb-3 inline-block">
                       {childCount} sub-topic{childCount !== 1 ? 's' : ''}
                     </p>
                   )}
-                  <CardDescription>{post.data.description}</CardDescription>
+                  <CardDescription class="text-base leading-relaxed">{post.data.description}</CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent class="py-3">
               <div class="flex flex-wrap gap-2">
                 {post.data.tags?.map(tag => (
                   <Badge variant="secondary">{tag}</Badge>
                 ))}
               </div>
             </CardContent>
-            <CardFooter class="justify-between">
-              <p class="text-sm text-muted-foreground">
+            <CardFooter class="justify-between border-t pt-5">
+              <p class="text-xs font-medium text-muted-foreground">
                 {post.data.date.toLocaleDateString('en-US', { 
                   year: 'numeric', 
                   month: 'long', 
                   day: 'numeric' 
                 })}
               </p>
-              <Button variant="ghost" href={`/blog/${post.id}`}>
+              <Button variant="ghost" href={`/blog/${post.id}`} class="text-sm">
                 Read →
               </Button>
             </CardFooter>
